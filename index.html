@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>JumpJumpJump</title>
+    <style>
+        body {
+            margin:0;
+            overflow:hidden;
+        }
+    </style>
+</head>
+<body>
+    <script src="./three.js-master/build/three.js"></script>
+    <script src="./three.js-master/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+        // create a scene just like a container, aiming to place all of the objects including object, light, camera, and
+        // other stuff which need to be rendered.
+        var scene = new THREE.Scene();
+
+        // create a camera(p)  (视角，纵横比，近场面：相机可以看见多近的东西，远场面)
+        var camera = new THREE.PerspectiveCamera(45,window.innerWidth/window.innerHeight,0.1,1000);
+        //setting up camera position
+        camera.position.set(30,40,30);
+        //the direction that camera looks at
+        camera.lookAt(scene.position);
+
+        //create render
+        //set up renderer color(16进制，透明度)
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setClearColor(0xEEEEEE,1.0);
+        renderer.setSize(window.innerWidth,window.innerHeight);
+        //渲染器渲染出得内容renderer.domElement(就是canvas)加到body里面
+        document.body.appendChild(renderer.domElement);
+
+
+        //create mesh geometry(length,width,height)
+        //
+        var cubeGeometry = new THREE.BoxGeometry(4,4,4);
+        var cubeMaterial = new THREE.MeshPhongMaterial({
+            color:0x7FFFAA
+
+        });
+        var cube = new THREE.Mesh(cubeGeometry,cubeMaterial);
+        scene.add(cube);
+        //渲染到页面
+        // renderer.render(scene,camera);
+        //但此时的物体不管设定什么颜色都是黑色，因为没有加光源
+
+        // add light
+        var light = new THREE.SpotLight(0xFFB6C1);
+        light.position.set(40,40,40);
+        scene.add(light);
+
+
+        //一旦我动了这个物体，就立马重新渲染这个页面
+        var step = 0;
+        function render(){
+            step += 0.02;
+            cube.position.x =10 +(10 * (Math.cos(step)));
+            cube.position.y =2 +(10 * Math.abs(Math.sin(step)));
+            renderer.render(scene,camera);
+            requestAnimationFrame(render);
+        }
+        render();
+
+        function renderer(){
+            renderer.render(scene,camera);
+        }
+
+        var controls = new THREE.OrbitControls(camera);
+        controls.addEventListener("change",renderer);
+
+        // 加上个直角坐标系看看 咱们的视角是45度 坐标长度20
+        var axes = new THREE.AxisHelper(20);
+        scene.add(axes);
+
+    </script>
+
+</body>
+</html>
